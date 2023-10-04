@@ -1,15 +1,15 @@
 const CANVAS_WIDTH = 500; // size in pixels
 const CANVAS_HEIGHT = 500;
 
-const NUM_ROWS = 10; // num tiles
-const NUM_COLS = 10;
+const NUM_ROWS = 9; // num tiles
+const NUM_COLS = 9;
 
 const HOVER_COLOR = "rgb(169,169,169)"; // light gray
 const WALL_TILE_COLOR = "#016A70";
 const EMPTY_TILE_COLOR = "#FFFFDD";
 const FILLED_TILE_COLOR = "gray";
 
-
+// https://www.puzzle-nurikabe.com/?pl=a6c1ccb99f8a602b501e90608ea527e4651d81d5c1962
 class Board {
     constructor(canvasId, width, height, numRows, numCols) {
         this.canvas = document.getElementById(canvasId);
@@ -134,6 +134,21 @@ class Board {
             }
         }
 
+        for (let poolCount = 0; poolCount < poolId+1; poolCount++) {
+            let poolSum = 0;
+            for (let row = 0; row < this.numRows; row++) {
+                for (let col = 0; col < this.numCols; col++) {
+                    if (this.grid[row][col].poolId != null && this.grid[row][col].poolId == poolCount) poolSum++;
+                }
+            }
+            for (let row = 0; row < this.numRows; row++) {
+                for (let col = 0; col < this.numCols; col++) {
+                    if (this.grid[row][col].poolId != null && this.grid[row][col].poolId == poolCount) this.grid[row][col].char = poolSum;
+                }
+            }
+            console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
+        }
+
     }
 
     exploreTile(t, poolId) {
@@ -198,6 +213,7 @@ class Tile {
         this.ctx = ctx;
         this.color = EMPTY_TILE_COLOR;
         this.poolId = null;
+        this.char = null;
 
         ctx.fillStyle = "black";
         ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -222,10 +238,10 @@ class Tile {
         this.ctx.fillRect(this.x + this.borderSize, this.y + this.borderSize, this.width - this.borderSize, this.height - this.borderSize);
 
         if (this.poolId != null) {
-            this.ctx.font = "50px Arial";
-        this.ctx.fillStyle = "black";
-        //this.ctx.textAlign="center";
-        this.ctx.fillText(this.poolId, this.x+10, this.y-5+this.height);
+            this.ctx.font = "35px Arial";
+            this.ctx.fillStyle = "black";
+            //this.ctx.textAlign="center";
+            this.ctx.fillText(this.char, this.x+10, this.y-5+this.height);
         }
         
         
