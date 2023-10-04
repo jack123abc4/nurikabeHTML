@@ -1,0 +1,3 @@
+id,name,width,height,coords;
+0,"Border 1",20,20,w21,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w2,u18,w21;
+1,"Just Corners",20,20,w1,u18,w1,u360,w1,u18,w1;

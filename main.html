@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <canvas id="mainCanvas" width="500" height="500"></canvas>
+        <div id="sidebar" width="200">
+            <div width="100%">
+            <button>Save</button>
+            <button onclick="loadText();">Load</button>
+            <select>
+                <option disabled selected>-- select a load file --</option>
+                <option value=0>Border 1</option>
+            </select>
+        </div>
+        <select width=100% name="drawMode" id="drawModeSelect">
+            <option value="normal">normal</option>
+            <option value="walls">walls</option>
+          </select>
+        
+        </div>
+        <script src="app.js" async defer></script>
+    </body>
+</html>
