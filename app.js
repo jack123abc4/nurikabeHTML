@@ -1,8 +1,10 @@
-const CANVAS_WIDTH = 500; // size in pixels
-const CANVAS_HEIGHT = 500;
+
 
 const NUM_ROWS = 9; // num tiles
 const NUM_COLS = 9;
+
+const CANVAS_WIDTH = NUM_COLS*50; // size in pixels
+const CANVAS_HEIGHT = NUM_ROWS*50;
 
 const HOVER_COLOR = "rgb(169,169,169)"; // light gray
 const WALL_TILE_COLOR = "#016A70";
@@ -195,6 +197,63 @@ class Board {
     //         url : "load.php"
     //     });
     // }
+  addTile() {
+    let numFilledTiles = 0;
+    for (let row = 0; row < this.numRows; row++) {
+      for (let col = 0; col < this.numCols; col++) {
+        if (!(this.grid[row][col] instanceof Wall) && this.grid[row][col].color == FILLED_TILE_COLOR) numFilledTiles++;
+      }
+    }
+    if (numFilledTiles == 0) {
+        let addedTile = null;
+      do {
+        addedTile = this.grid[Math.floor(Math.random() * this.numRows)][Math.floor(Math.random() * this.numCols)];
+      } while ((addedTile instanceof Wall) || addedTile.color == FILLED_TILE_COLOR)
+      addedTile.setColor(FILLED_TILE_COLOR);
+    }
+    else {
+      let filledTileRoot = null;
+      do {
+        let filledTileRootIndex = Math.floor(Math.random() * numFilledTiles);
+        for (let row = 0; row < this.numRows; row++) {
+          for (let col = 0; col < this.numCols; col++) {
+            if (!(this.grid[row][col] instanceof Wall) && this.grid[row][col].color == FILLED_TILE_COLOR) {
+            
+            if (filledTileRootIndex == 0) filledTileRoot = this.grid[row][col];
+            filledTileRootIndex--;
+            }
+          }
+        }
+
+        console.log(filledTileRootIndex);
+        console.log(filledTileRoot);
+        let validTiles = [];
+        if (filledTileRoot.row > 0 && !(this.grid[filledTileRoot.row-1][filledTileRoot.col] instanceof Wall) && this.grid[filledTileRoot.row-1][filledTileRoot.col].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row-1][filledTileRoot.col]);
+        if (filledTileRoot.col > 0 && !(this.grid[filledTileRoot.row][filledTileRoot.col-1] instanceof Wall) && this.grid[filledTileRoot.row][filledTileRoot.col-1].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col-1]);
+        if (filledTileRoot.row < this.numRows - 1 && !(this.grid[filledTileRoot.row+1][filledTileRoot.col] instanceof Wall) && this.grid[filledTileRoot.row+1][filledTileRoot.col].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row+1][filledTileRoot.col]);
+        if (filledTileRoot.col < this.numCols - 1 && !(this.grid[filledTileRoot.row][filledTileRoot.col+1] instanceof Wall) && this.grid[filledTileRoot.row][filledTileRoot.col+1].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col+1]);
+        if (validTiles.length > 0) {
+          filledTileRoot = validTiles[Math.floor(Math.random(validTiles.length) * 10)];
+        } 
+        else {
+          filledTileRoot = null;
+        }
+          
+      } while (filledTileRoot == null);
+    filledTileRoot.setColor(FILLED_TILE_COLOR);
+    }
+    
+    
+    
+  
+  }
+
+  checkTile(row, col, checkEmpty=false, checkFilled=false, checkWall=false, checktwoByTwos=false) {
+    if (row < 0 || row >= this.numRows || col < 0 || col >= this.numCols) return false;
+    let tileToCheck = this.grid[row][col];
+    
+    
+  }
 
 
 
@@ -312,4 +371,7 @@ drawModeSelect.onchange = function() {
 
 function loadText() {
     board.loadBoard(0);
+}
+function addTile() {
+  board.addTile();
 }
