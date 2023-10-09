@@ -150,6 +150,11 @@ class Board {
             }
             console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
         }
+      for (let row = 0; row < this.numRows; row++) {
+                for (let col = 0; col < this.numCols; col++) {
+                    this.grid[row][col].draw();
+                }
+            }
 
     }
 
@@ -228,10 +233,17 @@ class Board {
         console.log(filledTileRootIndex);
         console.log(filledTileRoot);
         let validTiles = [];
-        if (filledTileRoot.row > 0 && !(this.grid[filledTileRoot.row-1][filledTileRoot.col] instanceof Wall) && this.grid[filledTileRoot.row-1][filledTileRoot.col].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row-1][filledTileRoot.col]);
-        if (filledTileRoot.col > 0 && !(this.grid[filledTileRoot.row][filledTileRoot.col-1] instanceof Wall) && this.grid[filledTileRoot.row][filledTileRoot.col-1].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col-1]);
-        if (filledTileRoot.row < this.numRows - 1 && !(this.grid[filledTileRoot.row+1][filledTileRoot.col] instanceof Wall) && this.grid[filledTileRoot.row+1][filledTileRoot.col].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row+1][filledTileRoot.col]);
-        if (filledTileRoot.col < this.numCols - 1 && !(this.grid[filledTileRoot.row][filledTileRoot.col+1] instanceof Wall) && this.grid[filledTileRoot.row][filledTileRoot.col+1].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col+1]);
+        // if (filledTileRoot.row > 0 && !(this.grid[filledTileRoot.row-1][filledTileRoot.col] instanceof Wall) && this.grid[filledTileRoot.row-1][filledTileRoot.col].color == EMPTY_TILE_COLOR)
+
+        if (this.checkTile(filledTileRoot.row-1, filledTileRoot.col,false,true,true,true)) validTiles.push(this.grid[filledTileRoot.row-1][filledTileRoot.col]);
+
+        
+        // if (filledTileRoot.col > 0 && !(this.grid[filledTileRoot.row][filledTileRoot.col-1] instanceof Wall) && this.grid[filledTileRoot.row][filledTileRoot.col-1].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col-1]);
+        if (this.checkTile(filledTileRoot.row, filledTileRoot.col-1,false,true,true,true)) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col-1]);
+        // if (filledTileRoot.row < this.numRows - 1 && !(this.grid[filledTileRoot.row+1][filledTileRoot.col] instanceof Wall) && this.grid[filledTileRoot.row+1][filledTileRoot.col].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row+1][filledTileRoot.col]);
+        if (this.checkTile(filledTileRoot.row+1, filledTileRoot.col,false,true,true,true)) validTiles.push(this.grid[filledTileRoot.row+1][filledTileRoot.col]);
+        // if (filledTileRoot.col < this.numCols - 1 && !(this.grid[filledTileRoot.row][filledTileRoot.col+1] instanceof Wall) && this.grid[filledTileRoot.row][filledTileRoot.col+1].color == EMPTY_TILE_COLOR) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col+1]);
+        if (this.checkTile(filledTileRoot.row, filledTileRoot.col+1,false,true,true,true)) validTiles.push(this.grid[filledTileRoot.row][filledTileRoot.col+1]);
         if (validTiles.length > 0) {
           filledTileRoot = validTiles[Math.floor(Math.random(validTiles.length) * 10)];
         } 
@@ -243,16 +255,32 @@ class Board {
     filledTileRoot.setColor(FILLED_TILE_COLOR);
     }
     
+    this.resetPools();
+    
     
     
   
   }
 
-  checkTile(row, col, checkEmpty=false, checkFilled=false, checkWall=false, checktwoByTwos=false) {
+  checkTile(row, col, checkNotEmpty=false, checkNotFilled=false, checkNotWall=false, checkNotTwoByTwos=false) {
+    console.log(`function called! row: ${row} col: ${col} checkNotEmpty: ${checkNotEmpty} checkNotFiled: ${checkNotFilled} checkNotWall: ${checkNotWall} checkNotTwoByTwos: ${checkNotTwoByTwos}`);
     if (row < 0 || row >= this.numRows || col < 0 || col >= this.numCols) return false;
     let tileToCheck = this.grid[row][col];
+    if (checkNotEmpty && tileToCheck.color==EMPTY_TILE_COLOR) return false;
+    if (checkNotFilled && tileToCheck.color==FILLED_TILE_COLOR) return false;
+    if (checkNotWall && tileToCheck instanceof Wall) return false;
+    if (checkNotTwoByTwos) {
+      // upper left
+      let quad1 = this.checkTile(row-1, col-1, true, false, false, false) && this.checkTile(row-1, col, true, false, false, false) && this.checkTile(row, col-1, true, false, false, false);
+      let quad2 = this.checkTile(row-1, col, true, false, false, false) && this.checkTile(row-1, col+1, true, false, false, false) && this.checkTile(row, col+1, true, false, false, false);
+      let quad3 = this.checkTile(row, col+1, true, false, false, false) && this.checkTile(row+1, col+1, true, false, false, false) && this.checkTile(row+1, col, true, false, false, false);
+      let quad4 = this.checkTile(row+1, col, true, false, false, false) && this.checkTile(row+1, col-1, true, false, false, false) && this.checkTile(row, col-1, true, false, false, false);
+      console.log(`quad1: ${quad1} quad2: ${quad2} quad3: ${quad3} quad4: ${quad4}`);
+      if (quad1 || quad2 || quad3 || quad4) return false;
+      
+    }
     
-    
+    return true;
   }
 
 
