@@ -1,4 +1,4 @@
-id,name,width,height,coords;
+id,name,width,height,cellSize,coords;
 0,5x5,5,5,50,w,w,w,w,w,w,i,i,i,w,w,i,i,i,w,w,i,i,i,w,w,w,w,w,w;
 1,Just Corners,3,3,50,w,i,i,w,i,i,i,w,i,w;
 2,1x1,1,1,50,w;

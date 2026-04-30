@@ -41,7 +41,8 @@ switch ($action) {
                 $result["name"] = $lineVals[1];
                 $result["width"] = $lineVals[2];
                 $result["height"] = $lineVals[3];
-                $result["coords"] = array_slice($lineVals,4);
+                $result["cellSize"] = $lineVals[4];
+                $result["coords"] = array_slice($lineVals,5);
                 
             }
             
