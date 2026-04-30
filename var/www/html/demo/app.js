@@ -3,18 +3,120 @@
 const NUM_ROWS = 9; // num tiles
 const NUM_COLS = 9;
 
-const CANVAS_WIDTH = NUM_COLS*50; // size in pixels
-const CANVAS_HEIGHT = NUM_ROWS*50;
+const CANVAS_WIDTH_VAL = 50;
+const CANVAS_HEIGHT_VAL = 50;
+
+const CANVAS_WIDTH = NUM_COLS*CANVAS_WIDTH_VAL; // size in pixels
+const CANVAS_HEIGHT = NUM_ROWS*CANVAS_HEIGHT_VAL;
+
+
 
 const HOVER_COLOR = "rgb(169,169,169)"; // light gray
 const WALL_TILE_COLOR = "#016A70";
 const EMPTY_TILE_COLOR = "#FFFFDD";
 const FILLED_TILE_COLOR = "gray";
 
+class Puzzle {
+    constructor() {
+        this.board = new Board("mainCanvas", CANVAS_WIDTH, CANVAS_HEIGHT, NUM_ROWS, NUM_COLS);
+        this.drawModeSelect = document.querySelector("#drawModeSelect");
+        this.addListeners.call(this);
+
+    }
+
+    addListeners() {
+        console.log("adding listeners...");
+        addEventListener("mousemove", (event) => {
+            // console.log(event.clientX, ",", event.clientY);
+            
+            let flags = event.buttons !== undefined ? event.buttons : event.which;
+            let primaryMouseButtonDown = (flags & 1) === 1;
+            if (primaryMouseButtonDown) {
+                this.board.dragTile(event.clientX, event.clientY);
+            }
+            else {
+                this.board.checkFocus(event.clientX, event.clientY);
+            }
+            // console.log(primaryMouseButtonDown);
+
+
+        });
+
+        addEventListener("mousedown", (event) => {
+            // console.log("Click event listener triggered");
+            if (event.button == 0) {
+                this.board.clickTile(event.clientX, event.clientY);
+            }
+        })
+
+        addEventListener("mouseup", (event) => {
+            this.board.releaseMouse();
+        })
+
+        this.drawModeSelect.onchange = function() {
+            this.board.setDrawMode(drawModeSelect.value);
+        };
+    }
+
+    resetBoard() {
+        this.board.ctx = this.board.canvas.getContext("2d");
+        this.board.ctx.clearRect(0, 0, this.board.canvas.width, this.board.canvas.height);
+
+    }
+
+
+    addTile() {
+        this.board.addTile();
+    }
+
+    loadBoard(boardId) {
+
+        if (boardId == null) return;
+        
+        let thisPuzzle = this;
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function () {
+            // In local files, status is 0 upon success in Mozilla Firefox
+            // if (this.readyState === XMLHttpRequest.DONE) {
+            if (this.readyState == 4 && this.status == 200) {
+                const status = this.status;
+                if (status === 0 || (status >= 200 && status < 400)) {
+                    let res = JSON.parse(this.responseText);
+                    console.log(res);
+                    let boardResponse = this.responseText;
+                    thisPuzzle.resetBoard();
+                    thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
+                    thisPuzzle.addListeners(this);
+                    
+                } 
+                else {
+                    // console.log(`Error!`);
+                    // console.log(this.responseText);
+                // Oh no! There has been an error with the request!
+                }
+            }
+            else {
+                // console.log("uwu fucky wucky");
+            }
+        };
+          
+        xmlhttp.open("GET", `load.php?action=loadBoard&id=${boardId}`, true);
+        xmlhttp.send();
+    }
+
+
+}
+
 // https://www.puzzle-nurikabe.com/?pl=a6c1ccb99f8a602b501e90608ea527e4651d81d5c1962
 class Board {
     constructor(canvasId, width, height, numRows, numCols) {
+        this.drawBoard.call(this, canvasId, width, height, numRows, numCols);
+    }
+
+    drawBoard(canvasId, width, height, numRows, numCols) {
         this.canvas = document.getElementById(canvasId);
+        this.canvasId = canvasId;
         this.width = width;
         this.height = height;
         this.numRows = numRows;
@@ -27,20 +129,21 @@ class Board {
         this.canvas.setAttribute("width", width);
         this.canvas.setAttribute("height", height);
         
+        if (this.grid) this.grid.length = 0;
         this.grid = new Array(this.numRows);
         this.focusedTile = null;
         this.lastAction = null;
 
         for (let row = 0; row < numRows; row++) {
+            // console.log(`row: ${row}`);
             this.grid[row] = new Array(this.numCols);
             for (let col = 0; col < this.numCols; col++) {
-
+                // console.log(`col: ${col}`);
+                // this.grid[row][col] = null;
                 this.grid[row][col] = (row == 0 || col == 0 || row == this.numRows-1 || col == this.numCols-1) ? new Wall(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx) : new Tile(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
             }
         }
-        
     }
-
     checkFocus(mouseX, mouseY) {
         const mouseRow = Math.floor(mouseY / this.tileHeight);
         const mouseCol = Math.floor(mouseX / this.tileWidth);
@@ -148,7 +251,7 @@ class Board {
                     if (this.grid[row][col].poolId != null && this.grid[row][col].poolId == poolCount) this.grid[row][col].char = poolSum;
                 }
             }
-            console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
+            // console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
         }
       for (let row = 0; row < this.numRows; row++) {
                 for (let col = 0; col < this.numCols; col++) {
@@ -183,25 +286,73 @@ class Board {
         this.drawMode = drawMode;
         console.log(this.drawMode);
     }
-
+    /*
     loadBoard(boardId) {
         if (boardId == null) return;
+        let oldBoard = this;
         var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                alert(`Success! text:${JSON.parse(this.responseText)}`);
-            }
-        }
+        // console.log(`xmlhttp: ${xmlhttp}`);
 
+        xmlhttp.onreadystatechange = function () {
+            // In local files, status is 0 upon success in Mozilla Firefox
+            // if (this.readyState === XMLHttpRequest.DONE) {
+            if (this.readyState == 4 && this.status == 200) {
+                const status = this.status;
+                if (status === 0 || (status >= 200 && status < 400)) {
+                    console.log(this.responseText);
+                    this.canvas = document.getElementById("mainCanvas");
+
+                    
+
+                    
+                    this.canvasId = "mainCanvas";
+                    this.width = 5;
+                    this.height = 5;
+                    this.numRows = 5;
+                    this.numCols = 5;
+                    this.tileWidth = this.width / this.numCols;
+                    this.tileHeight = this.height / this.numRows;
+                    this.ctx = this.canvas.getContext("2d");
+                    this.drawMode = "normal";
+
+                    this.canvas.setAttribute("width", this.width);
+                    this.canvas.setAttribute("height", this.height);
+                    
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+                    if (this.grid) this.grid.length = 0;
+                    this.grid = new Array(this.numRows);
+                    this.focusedTile = null;
+                    this.lastAction = null;
+
+                    for (let row = 0; row < this.numRows; row++) {
+                        console.log(`row: ${row}`);
+                        this.grid[row] = new Array(this.numCols);
+                        for (let col = 0; col < this.numCols; col++) {
+                            console.log(`col: ${col}`);
+                            // this.grid[row][col] = null;
+                            this.grid[row][col] = (row == 0 || col == 0 || row == this.numRows-1 || col == this.numCols-1) ? new Wall(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx) : new Tile(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
+                        }
+                    }
+                    drawModeSelect = document.querySelector("#drawModeSelect");
+                } 
+                else {
+                    // console.log(`Error!`);
+                    // console.log(this.responseText);
+                // Oh no! There has been an error with the request!
+                }
+            }
+            else {
+                // console.log("uwu fucky wucky");
+            }
+        };
         xmlhttp.open("GET", `load.php?action=loadBoard&id=${boardId}`, true);
         xmlhttp.send();
     }
-    // saveBoard() {
-    //     $.ajax({
-    //         type : "POST",
-    //         url : "load.php"
-    //     });
-    // }
+    */
+
+    
+  
   addTile() {
     let numFilledTiles = 0;
     for (let row = 0; row < this.numRows; row++) {
@@ -363,43 +514,61 @@ class Wall extends Tile {
 
 
 
-let board = new Board("mainCanvas", CANVAS_WIDTH, CANVAS_HEIGHT, NUM_ROWS, NUM_COLS);
-let drawModeSelect = document.querySelector("#drawModeSelect");
+let puzzle = new Puzzle();
 
-addEventListener("mousemove", (event) => {
-    // console.log(event.clientX, ",", event.clientY);
-    
-    var flags = event.buttons !== undefined ? event.buttons : event.which;
-    primaryMouseButtonDown = (flags & 1) === 1;
-    if (primaryMouseButtonDown) {
-        board.dragTile(event.clientX, event.clientY);
-    }
-    else {
-        board.checkFocus(event.clientX, event.clientY);
-    }
-    // console.log(primaryMouseButtonDown);
-
-
-});
-
-addEventListener("mousedown", (event) => {
-    // console.log("Click event listener triggered");
-    if (event.button == 0) {
-        board.clickTile(event.clientX, event.clientY);
-    }
-})
-
-addEventListener("mouseup", (event) => {
-    board.releaseMouse();
-})
-
-drawModeSelect.onchange = function() {
-    board.setDrawMode(drawModeSelect.value);
-};
-
-function loadText() {
-    board.loadBoard(0);
+let loadText = function() {
+    const selectElement = document.getElementById("boardSelect");
+    const optionElement = selectElement.options[selectElement.selectedIndex];
+    if (optionElement.id == "defaultOption") return;
+    const selectedBoardId = optionElement.getAttribute("boardId");
+    // console.log(selectedBoardId);
+    puzzle.loadBoard(selectedBoardId);
 }
-function addTile() {
-  board.addTile();
+
+function loadBoardNames() {
+    let boardSelectEl = document.querySelector("#boardSelect");
+    let boardList = "";
+    
+    var xmlhttp = new XMLHttpRequest();
+    console.log(`xmlhttp: ${xmlhttp}`);
+    
+    
+    xmlhttp.onreadystatechange = function () {
+    // In local files, status is 0 upon success in Mozilla Firefox
+        // if (this.readyState === XMLHttpRequest.DONE) {
+        if (this.readyState == 4 && this.status == 200) {
+            const status = this.status;
+            if (status === 0 || (status >= 200 && status < 400)) {
+                // console.log("response text: ", this.responseText);
+                const boardSelectEl = document.querySelector("#boardSelect");
+                const boardSelectOptionEls = boardSelectEl.querySelectorAll("option");
+                // console.log(boardSelectOptionEls);
+                let boardNames = JSON.parse(this.responseText);
+                console.log(`boardNames: ${boardNames}`);
+                if (boardSelectOptionEls.length == 1) {
+                    for (let i = 0; i < boardNames.length; i++) {
+                        // console.log(`i: ${i}`);
+                        var opt = document.createElement('option');
+                        opt.value = boardNames[i];
+                        opt.innerHTML = boardNames[i];
+                        opt.setAttribute("boardId", i);
+                        boardSelectEl.appendChild(opt);
+                    }
+                }  
+            } 
+            else {
+                // console.log(`Error!`);
+                // console.log(this.responseText);
+            // Oh no! There has been an error with the request!
+            }
+        }
+        else {
+            // console.log("uwu fucky wucky");
+        }
+    };
+    xmlhttp.open("GET", `load.php?action=loadBoardNames`, true);
+    xmlhttp.send();
+    
+    
+
 }

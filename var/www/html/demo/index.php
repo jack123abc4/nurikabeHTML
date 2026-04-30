@@ -15,9 +15,8 @@
             <button>Save</button>
             <button onclick="loadText();">Load</button>
               <button onclick="addTile();">Add Tile</button>
-            <select>
-                <option disabled selected>-- select a load file --</option>
-                <option value=0>Border 1</option>
+            <select id="boardSelect" onclick="loadBoardNames()">
+                <option id="defaultOption" disabled selected>-- select a load file --</option>
             </select>
         </div>
         <select width=100% name="drawMode" id="drawModeSelect">
