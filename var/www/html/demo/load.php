@@ -2,9 +2,9 @@
 // var_dump($argc);
 // var_dump($argv);
 header('Content-type: application/json');
+
 $action = $_REQUEST['action'];
-// $action = "loadBoard";
-$boardFile = fopen("grids.txt", "r") or die("Unable to open file");
+$boardFile = file_get_contents('data.json');
 $boardText = fread($boardFile, filesize("grids.txt"));
 $boardLines = explode(";", $boardText);
 // echo json_encode($boardLines);

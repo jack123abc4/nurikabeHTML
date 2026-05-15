@@ -1,141 +1,109 @@
-id,name,width,height,cellSize,coords;
-0,5x5,5,5,50,w,w,w,w,w,w,i,i,i,w,w,i,i,i,w,w,i,i,i,w,w,w,w,w,w;
-1,Just Corners,3,3,50,w,i,i,w,i,i,i,w,i,w;
-2,1x1,1,1,50,w;
-
 {
     "id" : 0,
     "name" : "5x5",
     "width" : 5,
     "height" : 5,
     "cellSize" : 50,
-    "coords" : {
+    "cells" : [
         {
             "type" : "wall",
-            "x" : 0,
-            "y" : 0,
+            "coords" : [0,0]
         },
         {
             "type" : "wall",
-            "x" : 1,
-            "y" : 0,
+            "coords" : [1,0]
         },
         {
             "type" : "wall",
-            "x" : 2,
-            "y" : 0,
+            "coords" : [2,0]
         },
         {
             "type" : "wall",
-            "x" : 3,
-            "y" : 0,
+            "coords" : [3,0]
         },
         {
             "type" : "wall",
-            "x" : 4,
-            "y" : 0,
+            "coords" : [4,0]
         },
         {
             "type" : "wall",
-            "x" : 0,
-            "y" : 1,
+            "coords" : [0,1]
         },
         {
             "type" : "island",
-            "x" : 1,
-            "y" : 1,
+            "coords" : [1,1]
         },
         {
             "type" : "island",
-            "x" : 2,
-            "y" : 1,
+            "coords" : [2,1]
         },
         {
             "type" : "island",
-            "x" : 3,
-            "y" : 1,
+            "coords" : [3,1]
         },
         {
             "type" : "wall",
-            "x" : 4,
-            "y" : 1,
+            "coords" : [4,1]
         },
         {
             "type" : "wall",
-            "x" : 0,
-            "y" : 2,
+            "coords" : [0,2]
         },
         {
             "type" : "island",
-            "x" : 1,
-            "y" : 2,
+            "coords" : [1,2]
         },
         {
             "type" : "island",
-            "x" : 2,
-            "y" : 2,
+            "coords" : [2,2]
         },
         {
             "type" : "island",
-            "x" : 3,
-            "y" : 2,
+            "coords" : [3,2]
         },
         {
             "type" : "wall",
-            "x" : 4,
-            "y" : 2,
+            "coords" : [4,2]
         },
         {
             "type" : "wall",
-            "x" : 0,
-            "y" : 3,
+            "coords" : [0,3]
         },
         {
             "type" : "island",
-            "x" : 1,
-            "y" : 3,
+            "coords" : [1,3]
         },
         {
             "type" : "island",
-            "x" : 2,
-            "y" : 3,
+            "coords" : [2,3]
         },
         {
             "type" : "island",
-            "x" : 3,
-            "y" : 3,
+            "coords" : [3,3]
         },
         {
             "type" : "wall",
-            "x" : 4,
-            "y" : 3,
+            "coords" : [4,3]
         },
         {
             "type" : "wall",
-            "x" : 0,
-            "y" : 4,
+            "coords" : [0,4]
         },
         {
             "type" : "island",
-            "x" : 1,
-            "y" : 4,
+            "coords" : [1,4]
         },
         {
             "type" : "island",
-            "x" : 2,
-            "y" : 4,
+            "coords" : [2,4]
         },
         {
             "type" : "island",
-            "x" : 3,
-            "y" : 4,
+            "coords" : [3,4]
         },
         {
             "type" : "wall",
-            "x" : 4,
-            "y" : 4,
+            "coords" : [4,4]
         }
-        
-    }
-
+    ]
 }
