@@ -4,14 +4,22 @@
 header('Content-type: application/json');
 
 $action = $_REQUEST['action'];
-$boardFile = file_get_contents('data.json');
-$boardText = fread($boardFile, filesize("grids.txt"));
-$boardLines = explode(";", $boardText);
+$boardFile = file_get_contents('grids.json');
+$boardFileJSON = json_decode($boardFile, true);
+// $boardText = fread($boardFile, filesize("grids.txt"));
+// $boardLines = explode(";", $boardText);
 // echo json_encode($boardLines);
 $result = [
     "status" => "error"
 ];
 
+$result = [
+    "status" => "success",
+    "boardFile" => $boardFileJSON
+];
+
+echo json_encode($result);
+exit();
 
 
 switch ($action) {

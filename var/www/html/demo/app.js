@@ -543,15 +543,23 @@ function loadBoardNames() {
                 const boardSelectEl = document.querySelector("#boardSelect");
                 const boardSelectOptionEls = boardSelectEl.querySelectorAll("option");
                 // console.log(boardSelectOptionEls);
-                let boardNames = JSON.parse(this.responseText);
-                console.log(`boardNames: ${boardNames}`);
+                let responseJSON = JSON.parse(this.responseText);
+                let boardDataArr = responseJSON.boardFile.boards;
+                // console.log(`JSON.stringify(responseJSON):`);
+                console.log(responseJSON);
+                console.log(`responseJSON.boardFile.boards.id: ${responseJSON.boardFile.boards[0].id}`);
+
+                // console.log(`this.responseText: ${this.responseText}`);
+                // console.log(`JSON.stringify(this.responseText): ${JSON.stringify(this.responseText)}`);
+                
+                // console.log(`boardNames: ${boardNames}`);
                 if (boardSelectOptionEls.length == 1) {
-                    for (let i = 0; i < boardNames.length; i++) {
+                    for (const b of boardDataArr) {
                         // console.log(`i: ${i}`);
                         var opt = document.createElement('option');
-                        opt.value = boardNames[i];
-                        opt.innerHTML = boardNames[i];
-                        opt.setAttribute("boardId", i);
+                        opt.value = b.name;
+                        opt.innerHTML = b.name;
+                        opt.setAttribute("boardId", b.id);
                         boardSelectEl.appendChild(opt);
                     }
                 }  
