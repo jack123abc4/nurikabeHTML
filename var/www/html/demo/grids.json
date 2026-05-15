@@ -108,6 +108,64 @@
                     "coords" : [4,4]
                 }
             ]
+        },
+        {
+            "id" : 1,
+            "name" : "Just Corners",
+            "width" : 3,
+            "height" : 3,
+            "cellSize" : 50,
+            "cells" : [
+                {
+                    "type" : "wall",
+                    "coords" : [0,0]
+                },
+                {
+                    "type" : "island",
+                    "coords" : [1,0]
+                },
+                {
+                    "type" : "wall",
+                    "coords" : [2,0]
+                },
+                {
+                    "type" : "island",
+                    "coords" : [0,1]
+                },
+                {
+                    "type" : "island",
+                    "coords" : [1,1]
+                },
+                {
+                    "type" : "island",
+                    "coords" : [2,1]
+                },
+                {
+                    "type" : "wall",
+                    "coords" : [0,2]
+                },
+                {
+                    "type" : "island",
+                    "coords" : [1,2]
+                },
+                {
+                    "type" : "wall",
+                    "coords" : [2,2]
+                }
+            ]
+        },
+        {
+            "id" : 2,
+            "name" : "1x1",
+            "width" : 1,
+            "height" : 1,
+            "cellSize" : 50,
+            "cells" : [
+                {
+                    "type" : "wall",
+                    "coords" : [0,0]
+                }
+            ]
         }
     ]
 }
