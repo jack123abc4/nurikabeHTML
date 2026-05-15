@@ -68,7 +68,7 @@ switch ($action) {
             array_push($boardNames, $lineVals[1]);
             
         }
-
+        
         /*
         for ($i = 1; $i < count($boardLines); $i++) {
             $boardName = $boardLines[$i][1];
@@ -76,6 +76,7 @@ switch ($action) {
             //echo json_encode($lineVals);
             
         }
+
         */
         // echo json_encode($lineVals);
         echo json_encode($boardNames);
@@ -83,6 +84,8 @@ switch ($action) {
     default:
         
 }
+
+
 
 
 
