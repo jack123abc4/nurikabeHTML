@@ -43,7 +43,7 @@ class Puzzle {
         });
 
         addEventListener("mousedown", (event) => {
-            // console.log("Click event listener triggered");
+            console.log("Click event listener triggered");
             if (event.button == 0) {
                 this.board.clickTile(event.clientX, event.clientY);
             }
@@ -93,10 +93,11 @@ class Puzzle {
                     console.log("Found board object:");
                     console.log(bData);
                     console.log(`board name: ${bData["name"]} board width : ${bData["width"]} board height: ${bData["height"]} board cellsize: ${bData["cellSize"]}, board canvas width: ${bCanvasWidth} board canvas height: ${bCanvasHeight}`);
-                    thisPuzzle.resetBoard();
+                    
                     // thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
-                    thisPuzzle.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bData["width"], bData["height"],bData);
-                    thisPuzzle.addListeners(this);
+                    thisPuzzle.resetBoard();
+                    thisPuzzle.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bData["width"], bData["height"], bData);
+                    // thisPuzzle.addListeners();
                     
                 } 
                 else {
@@ -160,8 +161,8 @@ class Board {
                             return (data.coords[0] == col && data.coords[1] == row); 
                         }
                     )[0];
-                    console.log(`Tile data for [${col},${row}]:`);
-                    console.log(tileData);
+                    // console.log(`Tile data for [${col},${row}]:`);
+                    // console.log(tileData);
                     switch (tileData.type) {
                         case "wall":
                             this.grid[row][col] = new Wall(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
@@ -171,6 +172,7 @@ class Board {
                             break;
                         default:
                             console.log("Unknown tile type");
+                            this.grid[row][col] = new Tile(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
                             break;
                         }
                     }
