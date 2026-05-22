@@ -20,12 +20,21 @@ class Puzzle {
     constructor() {
         this.board = new Board("mainCanvas", CANVAS_WIDTH, CANVAS_HEIGHT, NUM_ROWS, NUM_COLS);
         this.drawModeSelect = document.querySelector("#drawModeSelect");
+        console.log("drawModeSelect");
+        console.log(this.drawModeSelect);
+        console.log("drawModeSelect value: ");
+        console.log(this.drawModeSelect.value);
         this.addListeners.call(this);
 
     }
 
     addListeners() {
         console.log("adding listeners...");
+        const thisBoard = this.board;
+        function setDrawMode() {
+            thisBoard.setDrawMode(document.querySelector("#drawModeSelect").value);
+        }
+
         addEventListener("mousemove", (event) => {
             // console.log(event.clientX, ",", event.clientY);
             
@@ -53,11 +62,16 @@ class Puzzle {
             this.board.releaseMouse();
         })
 
-        this.drawModeSelect.onchange = function() {
-            this.board.setDrawMode(drawModeSelect.value);
-        };
+        this.drawModeSelect.addEventListener('change', function() {
+            setDrawMode();
+        });
+
+        // document.querySelector("#drawModeSelect").onchange = function() {
+        //     this.board.setDrawMode(document.querySelector("#drawModeSelect").value);
+        // };
     }
 
+    
     resetBoard() {
         this.board.ctx = this.board.canvas.getContext("2d");
         this.board.ctx.clearRect(0, 0, this.board.canvas.width, this.board.canvas.height);
@@ -336,72 +350,6 @@ class Board {
         this.drawMode = drawMode;
         console.log(this.drawMode);
     }
-    /*
-    loadBoard(boardId) {
-        if (boardId == null) return;
-        let oldBoard = this;
-        var xmlhttp = new XMLHttpRequest();
-        // console.log(`xmlhttp: ${xmlhttp}`);
-
-        xmlhttp.onreadystatechange = function () {
-            // In local files, status is 0 upon success in Mozilla Firefox
-            // if (this.readyState === XMLHttpRequest.DONE) {
-            if (this.readyState == 4 && this.status == 200) {
-                const status = this.status;
-                if (status === 0 || (status >= 200 && status < 400)) {
-                    console.log(this.responseText);
-                    this.canvas = document.getElementById("mainCanvas");
-
-                    
-
-                    
-                    this.canvasId = "mainCanvas";
-                    this.width = 5;
-                    this.height = 5;
-                    this.numRows = 5;
-                    this.numCols = 5;
-                    this.tileWidth = this.width / this.numCols;
-                    this.tileHeight = this.height / this.numRows;
-                    this.ctx = this.canvas.getContext("2d");
-                    this.drawMode = "normal";
-
-                    this.canvas.setAttribute("width", this.width);
-                    this.canvas.setAttribute("height", this.height);
-                    
-                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-                    if (this.grid) this.grid.length = 0;
-                    this.grid = new Array(this.numRows);
-                    this.focusedTile = null;
-                    this.lastAction = null;
-
-                    for (let row = 0; row < this.numRows; row++) {
-                        console.log(`row: ${row}`);
-                        this.grid[row] = new Array(this.numCols);
-                        for (let col = 0; col < this.numCols; col++) {
-                            console.log(`col: ${col}`);
-                            // this.grid[row][col] = null;
-                            this.grid[row][col] = (row == 0 || col == 0 || row == this.numRows-1 || col == this.numCols-1) ? new Wall(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx) : new Tile(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
-                        }
-                    }
-                    drawModeSelect = document.querySelector("#drawModeSelect");
-                } 
-                else {
-                    // console.log(`Error!`);
-                    // console.log(this.responseText);
-                // Oh no! There has been an error with the request!
-                }
-            }
-            else {
-                // console.log("uwu fucky wucky");
-            }
-        };
-        xmlhttp.open("GET", `load.php?action=loadBoard&id=${boardId}`, true);
-        xmlhttp.send();
-    }
-    */
-
-    
   
   addTile() {
     let numFilledTiles = 0;
