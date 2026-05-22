@@ -58,9 +58,6 @@ class Puzzle {
             this.board.releaseMouse();
         })
 
-        // document.querySelector("#drawModeSelect").addEventListener('change', function() {
-        //     setDrawMode();
-        // });
         this.addButtonListeners();
 
        
@@ -69,15 +66,15 @@ class Puzzle {
     addButtonListeners() {
         let thisBoard = this.board;
 
-        function setDrawMode() {
-            console.log("Setting draw mode...");
-            console.log(thisBoard.drawMode);
-            thisBoard.updateDrawMode();
-            //thisBoard.setDrawMode(document.querySelector("#drawModeSelect").value);
-        }
+        // function setDrawMode() {
+        //     console.log("Setting draw mode...");
+        //     console.log(thisBoard.drawMode);
+        //     thisBoard.updateDrawMode();
+        //     //thisBoard.setDrawMode(document.querySelector("#drawModeSelect").value);
+        // }
 
         document.querySelector("#drawModeSelect").addEventListener('change', function() {
-            setDrawMode();
+            thisBoard.updateDrawMode();
         });
     }
 

@@ -13,8 +13,8 @@
         <div id="sidebar" width="200">
             <div width="100%">
             <button>Save</button>
-            <button onclick="loadText();">Load</button>
-              <button onclick="addTile();">Add Tile</button>
+            <button id="loadButton" onclick="loadText();">Load</button>
+            <button id="newButton">New</button>
             <select id="boardSelect" onclick="loadBoardNames()">
                 <option id="defaultOption" disabled selected>-- select a load file --</option>
             </select>
@@ -25,6 +25,15 @@
           </select>
         
         </div>
+        <div id="modal" class="modal-overlay">
+            <div class="modal-box">
+                <button id="closeBtn" class="modal-close">×</button>
+
+                <h3>Hello!</h3>
+                <p>This is a modal popup.</p>
+            </div>
+            </div>
         <script src="app.js" async defer></script>
+        <link href="style.css" rel="stylesheet" type="text/css" />
     </body>
 </html>
