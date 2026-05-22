@@ -82,11 +82,20 @@ class Puzzle {
             if (this.readyState == 4 && this.status == 200) {
                 const status = this.status;
                 if (status === 0 || (status >= 200 && status < 400)) {
-                    let res = JSON.parse(this.responseText);
-                    console.log(res);
-                    let boardResponse = this.responseText;
+                    // console.log("this.responseText: ");
+                    // console.log(this.responseText);
+
+                    let bData = JSON.parse(this.responseText).boardData;
+                    let bCanvasWidth = bData["width"] * bData["cellSize"];
+                    let bCanvasHeight = bData["height"] * bData["cellSize"];
+                    
+                    // console.log(res);
+                    console.log("Found board object:");
+                    console.log(bData);
+                    console.log(`board name: ${bData["name"]} board width : ${bData["width"]} board height: ${bData["height"]} board cellsize: ${bData["cellSize"]}, board canvas width: ${bCanvasWidth} board canvas height: ${bCanvasHeight}`);
                     thisPuzzle.resetBoard();
-                    thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
+                    // thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
+                    thisPuzzle.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bData["width"], bData["height"],bData);
                     thisPuzzle.addListeners(this);
                     
                 } 
@@ -100,6 +109,7 @@ class Puzzle {
                 // console.log("uwu fucky wucky");
             }
         };
+        
           
         xmlhttp.open("GET", `load.php?action=loadBoard&id=${boardId}`, true);
         xmlhttp.send();
@@ -110,11 +120,11 @@ class Puzzle {
 
 // https://www.puzzle-nurikabe.com/?pl=a6c1ccb99f8a602b501e90608ea527e4651d81d5c1962
 class Board {
-    constructor(canvasId, width, height, numRows, numCols) {
-        this.drawBoard.call(this, canvasId, width, height, numRows, numCols);
+    constructor(canvasId, width, height, numRows, numCols, boardData=null) {
+        this.drawBoard.call(this, canvasId, width, height, numRows, numCols, boardData);
     }
 
-    drawBoard(canvasId, width, height, numRows, numCols) {
+    drawBoard(canvasId, width, height, numRows, numCols, boardData=null) {
         this.canvas = document.getElementById(canvasId);
         this.canvasId = canvasId;
         this.width = width;
@@ -134,15 +144,53 @@ class Board {
         this.focusedTile = null;
         this.lastAction = null;
 
-        for (let row = 0; row < numRows; row++) {
-            // console.log(`row: ${row}`);
-            this.grid[row] = new Array(this.numCols);
-            for (let col = 0; col < this.numCols; col++) {
-                // console.log(`col: ${col}`);
-                // this.grid[row][col] = null;
-                this.grid[row][col] = (row == 0 || col == 0 || row == this.numRows-1 || col == this.numCols-1) ? new Wall(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx) : new Tile(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
+        if (boardData) {
+            console.log("Board data found");
+            console.log(boardData);
+            for (let row = 0; row < numRows; row++) {
+                // console.log(`row: ${row}`);
+                this.grid[row] = new Array(this.numCols);
+                for (let col = 0; col < this.numCols; col++) {
+                    // console.log(`col: ${col}`);
+                    // this.grid[row][col] = null;
+                    let tileData = boardData.cells.filter(
+                        function(data){ 
+                            // console.log("data.coords");
+                            // console.log(data.coords);
+                            return (data.coords[0] == col && data.coords[1] == row); 
+                        }
+                    )[0];
+                    console.log(`Tile data for [${col},${row}]:`);
+                    console.log(tileData);
+                    switch (tileData.type) {
+                        case "wall":
+                            this.grid[row][col] = new Wall(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
+                            break;
+                        case "island":
+                            this.grid[row][col] = new Tile(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
+                            break;
+                        default:
+                            console.log("Unknown tile type");
+                            break;
+                        }
+                    }
             }
         }
+        else {
+            console.log("No board data found.");
+            console.log(boardData);
+            for (let row = 0; row < numRows; row++) {
+                // console.log(`row: ${row}`);
+                this.grid[row] = new Array(this.numCols);
+                for (let col = 0; col < this.numCols; col++) {
+                    // console.log(`col: ${col}`);
+                    // this.grid[row][col] = null;
+                    this.grid[row][col] = (row == 0 || col == 0 || row == this.numRows-1 || col == this.numCols-1) ? new Wall(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx) : new Tile(this.tileWidth, this.tileHeight, col*this.tileWidth, row*this.tileHeight, row, col, this.ctx);
+                }
+            }
+        }
+
+        
     }
     checkFocus(mouseX, mouseY) {
         const mouseRow = Math.floor(mouseY / this.tileHeight);
@@ -546,8 +594,8 @@ function loadBoardNames() {
                 let responseJSON = JSON.parse(this.responseText);
                 let boardDataArr = responseJSON.boardFile.boards;
                 // console.log(`JSON.stringify(responseJSON):`);
-                console.log(responseJSON);
-                console.log(`responseJSON.boardFile.boards.id: ${responseJSON.boardFile.boards[0].id}`);
+                // console.log(responseJSON);
+                // console.log(`responseJSON.boardFile.boards.id: ${responseJSON.boardFile.boards[0].id}`);
 
                 // console.log(`this.responseText: ${this.responseText}`);
                 // console.log(`JSON.stringify(this.responseText): ${JSON.stringify(this.responseText)}`);
@@ -574,7 +622,7 @@ function loadBoardNames() {
             // console.log("uwu fucky wucky");
         }
     };
-    xmlhttp.open("GET", `load.php?action=loadBoardNames`, true);
+    xmlhttp.open("GET", `load.php?action=loadAllBoardsData`, true);
     xmlhttp.send();
     
     
