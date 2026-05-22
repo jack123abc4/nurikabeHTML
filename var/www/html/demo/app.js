@@ -30,10 +30,6 @@ class Puzzle {
 
     addListeners() {
         console.log("adding listeners...");
-        const thisBoard = this.board;
-        function setDrawMode() {
-            thisBoard.setDrawMode(document.querySelector("#drawModeSelect").value);
-        }
 
         addEventListener("mousemove", (event) => {
             // console.log(event.clientX, ",", event.clientY);
@@ -62,13 +58,27 @@ class Puzzle {
             this.board.releaseMouse();
         })
 
-        this.drawModeSelect.addEventListener('change', function() {
+        // document.querySelector("#drawModeSelect").addEventListener('change', function() {
+        //     setDrawMode();
+        // });
+        this.addButtonListeners();
+
+       
+    }
+
+    addButtonListeners() {
+        let thisBoard = this.board;
+
+        function setDrawMode() {
+            console.log("Setting draw mode...");
+            console.log(thisBoard.drawMode);
+            thisBoard.updateDrawMode();
+            //thisBoard.setDrawMode(document.querySelector("#drawModeSelect").value);
+        }
+
+        document.querySelector("#drawModeSelect").addEventListener('change', function() {
             setDrawMode();
         });
-
-        // document.querySelector("#drawModeSelect").onchange = function() {
-        //     this.board.setDrawMode(document.querySelector("#drawModeSelect").value);
-        // };
     }
 
     
@@ -111,7 +121,7 @@ class Puzzle {
                     // thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
                     thisPuzzle.resetBoard();
                     thisPuzzle.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bData["width"], bData["height"], bData);
-                    // thisPuzzle.addListeners();
+                    thisPuzzle.addButtonListeners();
                     
                 } 
                 else {
@@ -137,6 +147,7 @@ class Puzzle {
 class Board {
     constructor(canvasId, width, height, numRows, numCols, boardData=null) {
         this.drawBoard.call(this, canvasId, width, height, numRows, numCols, boardData);
+        this.resetPools.call(this);
     }
 
     drawBoard(canvasId, width, height, numRows, numCols, boardData=null) {
@@ -149,7 +160,7 @@ class Board {
         this.tileWidth = this.width / this.numCols;
         this.tileHeight = this.height / this.numRows;
         this.ctx = this.canvas.getContext("2d");
-        this.drawMode = "normal";
+        this.drawMode = document.querySelector("#drawModeSelect").value;
 
         this.canvas.setAttribute("width", width);
         this.canvas.setAttribute("height", height);
@@ -348,6 +359,11 @@ class Board {
 
     setDrawMode(drawMode) {
         this.drawMode = drawMode;
+        console.log(this.drawMode);
+    }
+
+    updateDrawMode() {
+        this.drawMode = document.querySelector("#drawModeSelect").value;
         console.log(this.drawMode);
     }
   
