@@ -20,6 +20,8 @@ class Puzzle {
     constructor() {
         this.board = new Board("mainCanvas", CANVAS_WIDTH, CANVAS_HEIGHT, NUM_ROWS, NUM_COLS);
         this.drawModeSelect = document.querySelector("#drawModeSelect");
+        this.modal = document.querySelector("#modal");
+        console.log("openModal", this.openModal);
         console.log("drawModeSelect");
         console.log(this.drawModeSelect);
         console.log("drawModeSelect value: ");
@@ -48,7 +50,7 @@ class Puzzle {
         });
 
         addEventListener("mousedown", (event) => {
-            console.log("Click event listener triggered");
+            // console.log("Click event listener triggered");
             if (event.button == 0) {
                 this.board.clickTile(event.clientX, event.clientY);
             }
@@ -58,14 +60,25 @@ class Puzzle {
             this.board.releaseMouse();
         })
 
+        
         this.addButtonListeners();
 
        
     }
 
     addButtonListeners() {
-        let thisBoard = this.board;
+        const thisBoard = this.board;
+        const modal = document.getElementById("modal");
+        const editBtn = document.getElementById("editButton");
+        const closeBtn = document.getElementById("closeBtn");
 
+        this.updateModal();
+        
+
+
+        // console.log("Modal element:", modal);
+        // console.log("New button:", newBtn);
+        // console.log("Close button:", closeBtn); 
         // function setDrawMode() {
         //     console.log("Setting draw mode...");
         //     console.log(thisBoard.drawMode);
@@ -73,9 +86,55 @@ class Puzzle {
         //     //thisBoard.setDrawMode(document.querySelector("#drawModeSelect").value);
         // }
 
+        function openModal() {
+            modal.classList.add("show");
+            // this.openModal = true;
+            // console.log("close modal func || this.openModal: ", this.openModal);
+        }
+        function closeModal() {
+            modal.classList.remove("show");
+            
+            // this.openModal = false;
+            // console.log("close modal func || this.openModal: ", this.openModal);
+        }
+
+        editBtn.addEventListener("click", function() {
+            openModal();
+        })
+
+        closeBtn.addEventListener("click", function() {
+            closeModal();
+        });
+
         document.querySelector("#drawModeSelect").addEventListener('change', function() {
             thisBoard.updateDrawMode();
         });
+
+        // modal
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal();
+                
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    }
+    
+    updateModal() {
+        const boardNameEl = document.getElementById("boardName");
+        const boardNameInputEl = document.getElementById("boardNameInput");
+        const boardSizeInputEl = document.getElementById("boardSizeInput");
+        
+        boardNameInputEl.setAttribute("value", boardNameEl.innerHTML);
+        boardSizeInputEl.setAttribute("value", this.board.numRows);
+        
+
+
     }
 
     
@@ -135,6 +194,12 @@ class Puzzle {
           
         xmlhttp.open("GET", `load.php?action=loadBoard&id=${boardId}`, true);
         xmlhttp.send();
+    }
+
+    updateModelStatus() {
+        this.modal = this.modal.classList.contains("show");
+        return this.modal;   
+        // console.log(this.model.style.getAttribute())
     }
 
 
@@ -480,6 +545,7 @@ class Tile {
     }
 
     draw() {
+        
         this.ctx.fillStyle = "black";
         this.ctx.fillRect(this.x, this.y, this.width, this.height);
 
@@ -498,6 +564,7 @@ class Tile {
 
     click() {
         // console.log("Click!");
+        if (document.getElementById("modal").classList.contains("show")) return;
         this.color = this.color == EMPTY_TILE_COLOR ? FILLED_TILE_COLOR : EMPTY_TILE_COLOR;
         this.draw();
         return this.color;
@@ -587,7 +654,4 @@ function loadBoardNames() {
     };
     xmlhttp.open("GET", `load.php?action=loadAllBoardsData`, true);
     xmlhttp.send();
-    
-    
-
 }
