@@ -214,6 +214,8 @@ class Puzzle {
                     thisPuzzle.addButtonListeners();
 
                     document.getElementById("boardName").innerHTML = bData["name"];
+                    document.getElementById("boardNameInput").value = bData["name"];
+                    document.getElementById("boardSizeInput").value = bData["width"];
                     
                 } 
                 else {
