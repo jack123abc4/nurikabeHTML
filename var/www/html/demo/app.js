@@ -18,7 +18,7 @@ const FILLED_TILE_COLOR = "gray";
 
 class Puzzle {
     constructor() {
-        this.board = new Board("mainCanvas", CANVAS_WIDTH, CANVAS_HEIGHT, NUM_ROWS, NUM_COLS);
+        this.board = new Board("mainCanvas", CANVAS_WIDTH, CANVAS_HEIGHT, NUM_ROWS, NUM_COLS, name="Untitled Nurikabe");
         this.drawModeSelect = document.querySelector("#drawModeSelect");
         this.modal = document.querySelector("#modal");
         console.log("openModal", this.openModal);
@@ -60,6 +60,21 @@ class Puzzle {
             this.board.releaseMouse();
         })
 
+        addEventListener("submit", (event) => { 
+            switch (event.target.getAttribute("id")) {
+                case "boardForm":
+                    
+                    break;
+                default:
+                    const formVals = [];
+                    for (const el of event.srcElement) {
+                        if (el.tagName.toLowerCase() === "input") {
+                            formVals.push(el);
+                        }
+                    }
+                    console.log(formVals);
+            }
+        })
         
         this.addButtonListeners();
 
@@ -69,8 +84,10 @@ class Puzzle {
     addButtonListeners() {
         const thisBoard = this.board;
         const modal = document.getElementById("modal");
-        const editBtn = document.getElementById("editButton");
+        const editBtn = document.getElementById("editBtn");
         const closeBtn = document.getElementById("closeBtn");
+        const submitBtn = document.getElementById("submitBtn");
+        const saveBtn = document.getElementById("saveBtn");
 
         this.updateModal();
         
@@ -104,6 +121,15 @@ class Puzzle {
 
         closeBtn.addEventListener("click", function() {
             closeModal();
+        });
+
+        submitBtn.addEventListener("click", function() {
+            //thisBoard.newBoard("mainCanvas", bCanvasWidth, bCanvasHeight, bWidth, bHeight, bName)
+            // let boardSize = document.getElementById("boardSizeInput").value;
+            // let boardName = document.getElementById("boardNameInput").value;
+            // this.createBoard(boardSize, boardName);
+            closeModal();
+
         });
 
         document.querySelector("#drawModeSelect").addEventListener('change', function() {
@@ -149,6 +175,14 @@ class Puzzle {
         this.board.addTile();
     }
 
+    newBoard(bCanvasWidth, bCanvasHeight, bWidth, bHeight, bName) {
+        this.resetBoard();
+        this.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bWidth, bHeight, bName);
+        this.addButtonListeners();
+
+        document.getElementById("boardName").innerHTML = document.getElementById("bName").value;
+    }
+
     loadBoard(boardId) {
 
         if (boardId == null) return;
@@ -176,8 +210,10 @@ class Puzzle {
                     
                     // thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
                     thisPuzzle.resetBoard();
-                    thisPuzzle.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bData["width"], bData["height"], bData);
+                    thisPuzzle.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bData["width"], bData["height"], bData["name"], bData);
                     thisPuzzle.addButtonListeners();
+
+                    document.getElementById("boardName").innerHTML = bData["name"];
                     
                 } 
                 else {
@@ -196,6 +232,20 @@ class Puzzle {
         xmlhttp.send();
     }
 
+    createBoard(boardSize, boardName) {
+        if (boardSize == null) return;
+
+        let thisPuzzle = this;
+        
+        // thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
+        thisPuzzle.resetBoard();
+        thisPuzzle.board = new Board("mainCanvas", CANVAS_WIDTH_VAL*boardSize, CANVAS_HEIGHT_VAL*boardSize, boardSize, boardSize, boardName);
+        thisPuzzle.addButtonListeners();
+
+        document.getElementById("boardName").innerHTML = boardName;
+                    
+    }
+
     updateModelStatus() {
         this.modal = this.modal.classList.contains("show");
         return this.modal;   
@@ -207,12 +257,12 @@ class Puzzle {
 
 // https://www.puzzle-nurikabe.com/?pl=a6c1ccb99f8a602b501e90608ea527e4651d81d5c1962
 class Board {
-    constructor(canvasId, width, height, numRows, numCols, boardData=null) {
-        this.drawBoard.call(this, canvasId, width, height, numRows, numCols, boardData);
+    constructor(canvasId, width, height, numRows, numCols, name="Untitled Nurikabe",boardData=null) {
+        this.drawBoard.call(this, canvasId, width, height, numRows, numCols, name, boardData);
         this.resetPools.call(this);
     }
 
-    drawBoard(canvasId, width, height, numRows, numCols, boardData=null) {
+    drawBoard(canvasId, width, height, numRows, numCols, name, boardData=null) {
         this.canvas = document.getElementById(canvasId);
         this.canvasId = canvasId;
         this.width = width;
@@ -603,6 +653,12 @@ let loadText = function() {
     puzzle.loadBoard(selectedBoardId);
 }
 
+let createBoard = function() {
+    let boardSize = document.getElementById("boardSizeInput").value;
+    let boardName = document.getElementById("boardNameInput").value;
+    puzzle.createBoard(boardSize, boardName);
+}
+
 function loadBoardNames() {
     let boardSelectEl = document.querySelector("#boardSelect");
     let boardList = "";
@@ -655,3 +711,5 @@ function loadBoardNames() {
     xmlhttp.open("GET", `load.php?action=loadAllBoardsData`, true);
     xmlhttp.send();
 }
+
+
