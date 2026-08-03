@@ -281,7 +281,7 @@ class Puzzle {
             for (let col = 0; col < rowArr.length; col++) {
                 bData["cells"].push({
                     type : rowArr[col] instanceof Wall ? "wall" : "island",
-                    coords : [row, col]
+                    coords : [col, row]
                 });
             }
         }
