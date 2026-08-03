@@ -132,6 +132,24 @@ class Puzzle {
 
         });
 
+        // saveBtn.addEventListener("click", function() {
+        //     let testData = {
+        //         id : 4,
+        //         "name" : "1x1 pt 2",
+        //         "width" : 1,
+        //         "height" : 1,
+        //         "cellSize" : 50,
+        //         "cells" : [
+        //             {
+        //                 "type" : "wall",
+        //                 "coords" : [0,0]
+        //             }
+        //         ]
+        //     };
+
+        //     console.log(testData);
+        // });
+
         document.querySelector("#drawModeSelect").addEventListener('change', function() {
             thisBoard.updateDrawMode();
         });
@@ -246,6 +264,90 @@ class Puzzle {
 
         document.getElementById("boardName").innerHTML = boardName;
                     
+    }
+
+    saveBoard(boardSize, boardName) {
+        let bData = {
+            name : boardName,
+            width : boardSize,
+            height : boardSize,
+            cellSize : CANVAS_WIDTH_VAL,
+            cells : []
+        }
+
+        for (let row = 0; row < this.board.grid.length; row++) {
+            const rowArr = this.board.grid[row];
+            // console.log(`row ${row}: ${rowArr}`);
+            for (let col = 0; col < rowArr.length; col++) {
+                bData["cells"].push({
+                    type : rowArr[col] instanceof Wall ? "wall" : "island",
+                    coords : [row, col]
+                });
+            }
+        }
+        console.log(bData);
+
+
+
+        // let testData = {
+        //     id : 4,
+        //     "name" : "1x1 pt 2",
+        //     "width" : 1,
+        //     "height" : 1,
+        //     "cellSize" : 50,
+        //     "cells" : [
+        //         {
+        //             "type" : "wall",
+        //             "coords" : [0,0]
+        //         }
+        //     ]
+        // };
+        // console.log(testData);
+        // let thisPuzzle = this;
+        // var xmlhttp = new XMLHttpRequest();
+
+        // xmlhttp.onreadystatechange = function () {
+        //     // In local files, status is 0 upon success in Mozilla Firefox
+        //     // if (this.readyState === XMLHttpRequest.DONE) {
+        //     if (this.readyState == 4 && this.status == 200) {
+        //         const status = this.status;
+        //         if (status === 0 || (status >= 200 && status < 400)) {
+        //             // console.log("this.responseText: ");
+        //             // console.log(this.responseText);
+
+        //             let bData = JSON.parse(this.responseText).boardData;
+        //             let bCanvasWidth = bData["width"] * bData["cellSize"];
+        //             let bCanvasHeight = bData["height"] * bData["cellSize"];
+                    
+        //             // console.log(res);
+        //             console.log("Found board object:");
+        //             console.log(bData);
+        //             console.log(`board name: ${bData["name"]} board width : ${bData["width"]} board height: ${bData["height"]} board cellsize: ${bData["cellSize"]}, board canvas width: ${bCanvasWidth} board canvas height: ${bCanvasHeight}`);
+                    
+        //             // thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
+        //             thisPuzzle.resetBoard();
+        //             thisPuzzle.board = new Board("mainCanvas", bCanvasWidth, bCanvasHeight, bData["width"], bData["height"], bData["name"], bData);
+        //             thisPuzzle.addButtonListeners();
+
+        //             document.getElementById("boardName").innerHTML = bData["name"];
+        //             document.getElementById("boardNameInput").value = bData["name"];
+        //             document.getElementById("boardSizeInput").value = bData["width"];
+                    
+        //         } 
+        //         else {
+        //             // console.log(`Error!`);
+        //             // console.log(this.responseText);
+        //         // Oh no! There has been an error with the request!
+        //         }
+        //     }
+        //     else {
+        //         // console.log("uwu fucky wucky");
+        //     }
+        // };
+        
+          
+        // xmlhttp.open("GET", `load.php?action=loadBoard&id=${boardId}`, true);
+        // xmlhttp.send();
     }
 
     updateModelStatus() {
@@ -659,6 +761,12 @@ let createBoard = function() {
     let boardSize = document.getElementById("boardSizeInput").value;
     let boardName = document.getElementById("boardNameInput").value;
     puzzle.createBoard(boardSize, boardName);
+}
+
+let saveBoard = function() {
+    const boardSize = document.getElementById("boardSizeInput").value;
+    const boardName = document.getElementById("boardNameInput").value;
+    puzzle.saveBoard(boardSize, boardName);
 }
 
 function loadBoardNames() {

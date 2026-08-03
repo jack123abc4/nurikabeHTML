@@ -14,7 +14,7 @@
         <h2 id="boardName">Untitled Nurikabe</h2>
         <div id="sidebar" width="200">
             <div width="100%">
-            <button id="saveBtn">Save</button>
+            <button id="saveBtn" onClick="saveBoard();">Save</button>
             <button id="loadBtn" onclick="loadText();">Load</button>
             <button id="editBtn">Edit</button>
             <select id="boardSelect" onclick="loadBoardNames()">
@@ -41,7 +41,7 @@
                     <h3>Edit Board</h3>
                     <p>Board size: <input id="boardSizeInput" label="Board size" type="number" min="1" step="1" required></p>
                     <p>Board name: <input id="boardNameInput" label="Board name" type="text" required></p>
-                    <input type="submit" id="submitBtn" value="Save" onclick="createBoard();"></input>
+                    <input type="submit" id="submitBtn" value="Submit" onclick="createBoard();"></input>
                     <button type="button" id="closeBtn" class="modal-close">x</button>
                 </form>
             </div>
