@@ -88,6 +88,10 @@ class Puzzle {
         const closeBtn = document.getElementById("closeBtn");
         const submitBtn = document.getElementById("submitBtn");
         const saveBtn = document.getElementById("saveBtn");
+        const boardSize = thisBoard.grid.length;
+        const boardName = thisBoard.name;
+
+        console.log(`boardSize: ${boardSize}\tboardName: ${boardName}`);
 
         this.updateModal();
         
@@ -104,6 +108,8 @@ class Puzzle {
         // }
 
         function openModal() {
+            document.getElementById("boardSizeInput").value = boardSize;
+            document.getElementById("boardNameInput").value = boardName;
             modal.classList.add("show");
             // this.openModal = true;
             // console.log("close modal func || this.openModal: ", this.openModal);
@@ -379,6 +385,7 @@ class Board {
         this.height = height;
         this.numRows = numRows;
         this.numCols = numCols;
+        this.name = name;
         this.tileWidth = this.width / this.numCols;
         this.tileHeight = this.height / this.numRows;
         this.ctx = this.canvas.getContext("2d");
