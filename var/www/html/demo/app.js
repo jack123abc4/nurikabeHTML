@@ -258,9 +258,12 @@ class Puzzle {
         let thisPuzzle = this;
         
         // thisPuzzle.board = new Board("mainCanvas", 250, 250, 5, 5);
-        thisPuzzle.resetBoard();
-        thisPuzzle.board = new Board("mainCanvas", CANVAS_WIDTH_VAL*boardSize, CANVAS_HEIGHT_VAL*boardSize, boardSize, boardSize, boardName);
-        thisPuzzle.addButtonListeners();
+        console.log(`boardSize: ${boardSize}\tthis.board.grid.length: ${this.board.grid.length}`);
+        if (boardSize != this.board.grid.length) {
+            thisPuzzle.resetBoard();
+            thisPuzzle.board = new Board("mainCanvas", CANVAS_WIDTH_VAL*boardSize, CANVAS_HEIGHT_VAL*boardSize, boardSize, boardSize, boardName);
+            thisPuzzle.addButtonListeners();
+        }
 
         document.getElementById("boardName").innerHTML = boardName;
                     
@@ -275,16 +278,19 @@ class Puzzle {
             cells : []
         }
 
-        for (let row = 0; row < this.board.grid.length; row++) {
-            const rowArr = this.board.grid[row];
+        for (let col = 0; col < this.board.grid.length; col++) {
+            const colArr = this.board.grid[col];
             // console.log(`row ${row}: ${rowArr}`);
-            for (let col = 0; col < rowArr.length; col++) {
+            for (let row = 0; row < colArr.length; row++) {
                 bData["cells"].push({
-                    type : rowArr[col] instanceof Wall ? "wall" : "island",
-                    coords : [col, row]
+                    type : colArr[row] instanceof Wall ? "wall" : "island",
+                    coords : [row, col]
                 });
             }
         }
+
+        
+
         console.log(bData);
 
 
