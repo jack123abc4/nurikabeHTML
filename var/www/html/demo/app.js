@@ -63,9 +63,12 @@ class Puzzle {
         addEventListener("submit", (event) => { 
             switch (event.target.getAttribute("id")) {
                 case "boardForm":
-                    
+                    // console.log("Submit case boardForm");
+                    // console.log(document.getElementById("modal"));
+                    document.getElementById("modal").classList.remove("show");
                     break;
                 default:
+                    console.log("Submit case default.");
                     const formVals = [];
                     for (const el of event.srcElement) {
                         if (el.tagName.toLowerCase() === "input") {
@@ -134,7 +137,7 @@ class Puzzle {
             // let boardSize = document.getElementById("boardSizeInput").value;
             // let boardName = document.getElementById("boardNameInput").value;
             // this.createBoard(boardSize, boardName);
-            closeModal();
+            // closeModal();
 
         });
 
@@ -390,6 +393,7 @@ class Board {
         this.tileHeight = this.height / this.numRows;
         this.ctx = this.canvas.getContext("2d");
         this.drawMode = document.querySelector("#drawModeSelect").value;
+        this.poolCharMode;
 
         this.canvas.setAttribute("width", width);
         this.canvas.setAttribute("height", height);
