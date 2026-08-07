@@ -21,13 +21,25 @@
                     <option id="defaultOption" disabled selected>-- select a load file --</option>
                 </select>
             </div>
+            <br>
             <div width=100%>
-                <select width=100% name="drawMode" id="drawModeSelect">
-                    <option value="normal">normal</option>
-                    <option value="walls">walls</option>
-                </select>
-                
+                <div width=45%>
+                    <label for="drawModeSelect">Draw mode</label>
+                    <select name="drawMode" id="drawModeSelect">
+                        <option value="normal">normal</option>
+                        <option value="walls">walls</option>
+                    </select>
+                </div>
             </div>
+            <div width=100%>
+                <div width=45%>
+                    <label for="showAllNums">Show all nums</label>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="numBtn">
+                    <span class="slider round"></span>
+                </label>
+
         
         </div>
         <!-- <div id="modal" class="modal-overlay">

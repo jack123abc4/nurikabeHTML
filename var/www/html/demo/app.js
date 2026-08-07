@@ -91,6 +91,7 @@ class Puzzle {
         const closeBtn = document.getElementById("closeBtn");
         const submitBtn = document.getElementById("submitBtn");
         const saveBtn = document.getElementById("saveBtn");
+        const numBtn = document.getElementById("numBtn");
         const boardSize = thisBoard.grid.length;
         const boardName = thisBoard.name;
 
@@ -138,7 +139,10 @@ class Puzzle {
             // let boardName = document.getElementById("boardNameInput").value;
             // this.createBoard(boardSize, boardName);
             // closeModal();
+        });
 
+        numBtn.addEventListener('change', function() {
+            // console.log(`numBtn status: ${numBtn.checked}`)
         });
 
         // saveBtn.addEventListener("click", function() {
@@ -381,7 +385,7 @@ class Board {
         this.resetPools.call(this);
     }
 
-    drawBoard(canvasId, width, height, numRows, numCols, name, boardData=null) {
+    drawBoard(canvasId, width, height, numRows, numCols, name, boardData=null, poolCharMode="one") {
         this.canvas = document.getElementById(canvasId);
         this.canvasId = canvasId;
         this.width = width;
@@ -393,7 +397,7 @@ class Board {
         this.tileHeight = this.height / this.numRows;
         this.ctx = this.canvas.getContext("2d");
         this.drawMode = document.querySelector("#drawModeSelect").value;
-        this.poolCharMode;
+        this.poolCharMode = poolCharMode;
 
         this.canvas.setAttribute("width", width);
         this.canvas.setAttribute("height", height);
@@ -534,6 +538,7 @@ class Board {
         for (let row = 0; row < this.numRows; row++) {
             for (let col = 0; col < this.numCols; col++) {
                 this.grid[row][col].poolId = null;
+                this.grid[row][col].char = null;
             }
         }
         let poolId = 0;
@@ -554,12 +559,26 @@ class Board {
                     if (this.grid[row][col].poolId != null && this.grid[row][col].poolId == poolCount) poolSum++;
                 }
             }
+            let randNumSq = Math.floor(Math.random()*poolSum);
+            let randNumSqIndex = 0;
+            console.log(`random number pick: ${randNumSq}`);
             for (let row = 0; row < this.numRows; row++) {
                 for (let col = 0; col < this.numCols; col++) {
-                    if (this.grid[row][col].poolId != null && this.grid[row][col].poolId == poolCount) this.grid[row][col].char = poolSum;
+                    if (this.grid[row][col].poolId != null && this.grid[row][col].poolId == poolCount) {
+                        switch (this.poolCharMode) {
+                            case "all":
+                                this.grid[row][col].char = poolSum;
+                                break;
+                            default:
+                                if (randNumSq == randNumSqIndex) this.grid[row][col].char = poolSum;
+                                randNumSqIndex++;
+                                
+                        
+                        }
+                    }
                 }
             }
-            // console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
+            console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
         }
       for (let row = 0; row < this.numRows; row++) {
                 for (let col = 0; col < this.numCols; col++) {
@@ -727,7 +746,8 @@ class Tile {
             this.ctx.font = "35px Arial";
             this.ctx.fillStyle = "black";
             //this.ctx.textAlign="center";
-            this.ctx.fillText(this.char, this.x+10, this.y-5+this.height);
+            
+            this.ctx.fillText((this.char ? this.char : " "), this.x+10, this.y-5+this.height);
         }
         
         
