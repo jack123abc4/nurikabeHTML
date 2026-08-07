@@ -94,6 +94,7 @@ class Puzzle {
         const numBtn = document.getElementById("numBtn");
         const boardSize = thisBoard.grid.length;
         const boardName = thisBoard.name;
+        
 
         console.log(`boardSize: ${boardSize}\tboardName: ${boardName}`);
 
@@ -142,6 +143,8 @@ class Puzzle {
         });
 
         numBtn.addEventListener('change', function() {
+            thisBoard.poolCharMode = numBtn.checked ? "one" : "all";
+            thisBoard.resetPools();
             // console.log(`numBtn status: ${numBtn.checked}`)
         });
 
@@ -385,7 +388,7 @@ class Board {
         this.resetPools.call(this);
     }
 
-    drawBoard(canvasId, width, height, numRows, numCols, name, boardData=null, poolCharMode="one") {
+    drawBoard(canvasId, width, height, numRows, numCols, name, boardData=null, poolCharMode="all") {
         this.canvas = document.getElementById(canvasId);
         this.canvasId = canvasId;
         this.width = width;
@@ -561,7 +564,7 @@ class Board {
             }
             let randNumSq = Math.floor(Math.random()*poolSum);
             let randNumSqIndex = 0;
-            console.log(`random number pick: ${randNumSq}`);
+            // console.log(`random number pick: ${randNumSq}`);
             for (let row = 0; row < this.numRows; row++) {
                 for (let col = 0; col < this.numCols; col++) {
                     if (this.grid[row][col].poolId != null && this.grid[row][col].poolId == poolCount) {
@@ -578,7 +581,7 @@ class Board {
                     }
                 }
             }
-            console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
+            // console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
         }
       for (let row = 0; row < this.numRows; row++) {
                 for (let col = 0; col < this.numCols; col++) {
