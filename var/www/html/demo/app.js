@@ -549,7 +549,7 @@ class Board {
             for (let col = 0; col < this.numCols; col++) {
                 let currentTile = this.grid[row][col];
                 if (!(currentTile instanceof Wall) && currentTile.poolId == null && currentTile.color == EMPTY_TILE_COLOR) {
-                    this.exploreTile(currentTile, poolId);
+                    this.explorePool(currentTile, poolId);
                     poolId++;
                 }
             }
@@ -575,41 +575,129 @@ class Board {
                             default:
                                 if (randNumSq == randNumSqIndex) this.grid[row][col].char = poolSum;
                                 randNumSqIndex++;
-                                
-                        
                         }
                     }
                 }
             }
             // console.log(`poolcount: ${poolCount}  poolsum: ${poolSum}`);
         }
-      for (let row = 0; row < this.numRows; row++) {
-                for (let col = 0; col < this.numCols; col++) {
-                    this.grid[row][col].draw();
-                }
+        for (let row = 0; row < this.numRows; row++) {
+            for (let col = 0; col < this.numCols; col++) {
+                this.grid[row][col].draw();
             }
+        }
+
+        console.log(`Board check: ${this.checkBoard()}`);
+
+
 
     }
 
-    exploreTile(t, poolId) {
+    explorePool(t, poolId=null) {
         t.poolId = poolId;
         // (0, -1), (-1, 0), (1, 0), (0, 1)
         if (t.col - 1 >= 0 && !(this.grid[t.row][t.col-1] instanceof Wall) && this.grid[t.row][t.col-1].color == EMPTY_TILE_COLOR && this.grid[t.row][t.col-1].poolId == null) {
             this.grid[t.row][t.col-1].poolId = poolId;
-            this.exploreTile(this.grid[t.row][t.col-1], poolId);
+            this.explorePool(this.grid[t.row][t.col-1], poolId);
         }
         if (t.row - 1 >= 0 && !(this.grid[t.row-1][t.col] instanceof Wall) && this.grid[t.row-1][t.col].color == EMPTY_TILE_COLOR && this.grid[t.row-1][t.col].poolId == null) {
             this.grid[t.row-1][t.col].poolId = poolId;
-            this.exploreTile(this.grid[t.row-1][t.col], poolId);
+            this.explorePool(this.grid[t.row-1][t.col], poolId);
         }
         if (t.col + 1 < this.numRows && !(this.grid[t.row][t.col+1] instanceof Wall) && this.grid[t.row][t.col+1].color == EMPTY_TILE_COLOR && this.grid[t.row][t.col+1].poolId == null) {
             this.grid[t.row][t.col+1].poolId = poolId;
-            this.exploreTile(this.grid[t.row][t.col+1], poolId);
+            this.explorePool(this.grid[t.row][t.col+1], poolId);
         }
         if (t.row + 1 < this.numCols && !(this.grid[t.row+1][t.col] instanceof Wall) && this.grid[t.row+1][t.col].color == EMPTY_TILE_COLOR && this.grid[t.row+1][t.col].poolId == null) {
             this.grid[t.row+1][t.col].poolId = poolId;
-            this.exploreTile(this.grid[t.row+1][t.col], poolId);
+            this.explorePool(this.grid[t.row+1][t.col], poolId);
         }
+        
+    }
+
+    exploreNurikabe(t) {
+        t.connected = true;
+        if (t.col - 1 >= 0 && !(this.grid[t.row][t.col-1] instanceof Wall) && this.grid[t.row][t.col-1].color == FILLED_TILE_COLOR && this.grid[t.row][t.col-1].checkedConnected == null) {
+            this.exploreNurikabe(this.grid[t.row][t.col-1]);
+        }
+        if (t.row - 1 >= 0 && !(this.grid[t.row-1][t.col] instanceof Wall) && this.grid[t.row-1][t.col].color == FILLED_TILE_COLOR && this.grid[t.row-1][t.col].connected == false) {
+            this.exploreNurikabe(this.grid[t.row-1][t.col]);
+        }
+        if (t.col + 1 < this.numRows && !(this.grid[t.row][t.col+1] instanceof Wall) && this.grid[t.row][t.col+1].color == FILLED_TILE_COLOR && this.grid[t.row][t.col+1].connected == false) {
+            this.exploreNurikabe(this.grid[t.row][t.col+1]);
+        }
+        if (t.row + 1 < this.numCols && !(this.grid[t.row+1][t.col] instanceof Wall) && this.grid[t.row+1][t.col].color == FILLED_TILE_COLOR && this.grid[t.row+1][t.col].connected == false) {
+            this.exploreNurikabe(this.grid[t.row+1][t.col]);
+        }
+    }
+
+    checkBoard() {
+        let rootNurikabe = null;
+
+        for (let col = 0; col < this.grid.length; col++) {
+            for (let row = 0; row < this.grid.length; row++) {
+                if (!rootNurikabe && this.grid[row][col].color == FILLED_TILE_COLOR) rootNurikabe = this.grid[row][col];
+                this.grid[row][col].connected = false;   
+            }
+        }
+
+        if (!rootNurikabe) return true;
+
+
+        this.exploreNurikabe(rootNurikabe);
+
+        let isTwoByTwo = false;
+        let isAllConnected = true;
+        for (let col = 0; col < this.grid.length; col++) {
+            for (let row = 0; row < this.grid.length; row++) {
+                let tileToCheck = this.grid[row][col];
+                // console.log(`Checking tile [${row},${col}] color: ${tileToCheck.color} connected: ${tileToCheck.connected}`);
+                if (tileToCheck.color == FILLED_TILE_COLOR) {
+                    if (tileToCheck.connected == false) isAllConnected = false;
+
+                
+                
+                    /*
+                    [row-1][col-1]
+                    let quad1 = (row-1 >= 0 && col-1 >= 0) ?
+                    [row-1][col+1]
+                    let quad2 = (row-1 >= 0 && col+1 < this.numCols) ?
+                    [row+1][col-1]
+                    
+                    let quad3 = (row+1 < this.numRows && col+1 < this.numCols) ?
+                    let quad4 = (row+1 < this.numRows && col-1 >= 0) ?
+                    
+                    
+                    
+                    */
+
+                    let quad1 = (row-1 >= 0 && col-1 >= 0) ? this.grid[row-1][col-1].color == FILLED_TILE_COLOR && this.grid[row-1][col].color == FILLED_TILE_COLOR && this.grid[row][col-1].color == FILLED_TILE_COLOR : false;
+                    let quad2 = (row-1 >= 0 && col+1 < this.numCols) ? this.grid[row-1][col].color == FILLED_TILE_COLOR && this.grid[row-1][col+1].color == FILLED_TILE_COLOR && this.grid[row][col+1].color == FILLED_TILE_COLOR : false;
+                    let quad3 = (row+1 < this.numRows && col+1 < this.numCols) ? this.grid[row][col+1].color == FILLED_TILE_COLOR && this.grid[row+1][col+1].color == FILLED_TILE_COLOR && this.grid[row+1][col].color == FILLED_TILE_COLOR : false;
+                    let quad4 = (row+1 < this.numRows && col-1 >= 0) ? this.grid[row][col-1].color == FILLED_TILE_COLOR && this.grid[row+1][col].color == FILLED_TILE_COLOR && this.grid[row+1][col-1].color == FILLED_TILE_COLOR : false;
+                    
+                    if (!isTwoByTwo && (quad1 || quad2 || quad3 || quad4)) isTwoByTwo = true;
+
+
+                    /*
+                    let quad2 = (row-1 >= 0 && col+1 < this.numCols) ? this.checkTile(row-1, col, true, false, false, false) && this.checkTile(row-1, col+1, true, false, false, false) && this.checkTile(row, col+1, true, false, false, false) : false;
+                    let quad3 = this.checkTile(row, col+1, true, false, false, false) && this.checkTile(row+1, col+1, true, false, false, false) && this.checkTile(row+1, col, true, false, false, false);
+                    let quad4 = this.checkTile(row+1, col, true, false, false, false) && this.checkTile(row+1, col-1, true, false, false, false) && this.checkTile(row, col-1, true, false, false, false);
+                    console.log(`quad1: ${quad1} quad2: ${quad2} quad3: ${quad3} quad4: ${quad4}`);
+                    console.log(`quad1 || quad2 || quad3 || quad4 ${quad1 || quad2 || quad3 || quad4}`)
+                    // if (quad1 || quad2 || quad3 || quad4) return false;
+                    */
+                }
+            }
+            
+        }
+        console.log(`all connected: ${isAllConnected} \t contains twoByTwo: ${isTwoByTwo}`);
+        return true;
+
+
+
+
+
     }
 
     setDrawMode(drawMode) {
@@ -623,6 +711,8 @@ class Board {
     }
   
   addTile() {
+    // WIP
+    return false;
     let numFilledTiles = 0;
     for (let row = 0; row < this.numRows; row++) {
       for (let col = 0; col < this.numCols; col++) {
@@ -699,9 +789,12 @@ class Board {
       if (quad1 || quad2 || quad3 || quad4) return false;
       
     }
+
     
     return true;
   }
+
+  
 
 
 
@@ -721,6 +814,7 @@ class Tile {
         this.color = EMPTY_TILE_COLOR;
         this.poolId = null;
         this.char = null;
+        this.connected = false;
 
         ctx.fillStyle = "black";
         ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -774,6 +868,7 @@ class Wall extends Tile {
     constructor(width, height, x, y, row, col, ctx) {
         super(width, height, x, y, row, col, ctx);
         this.color = WALL_TILE_COLOR;
+        
 
         ctx.fillStyle = this.color;
         ctx.fillRect(this.x + this.borderSize, this.y + this.borderSize, this.width - this.borderSize, this.height - this.borderSize);
